@@ -63,29 +63,34 @@ class TruthTableGUI:
             ('∧', 'AND'),
             ('∨', 'OR'), 
             ('¬', 'NOT'),
-            ('→', 'Implicación'),
+            ('→', 'Condicional'),
             ('↔', 'Bicondicional'),
             ('(', 'Paréntesis izq.'),
             (')', 'Paréntesis der.')
         ]
-        
+
         for i, (symbol, desc) in enumerate(operators):
-            btn = ttk.Button(op_frame, text=f"{symbol}\n{desc}", width=12,
-                           command=lambda s=symbol: self.add_to_expression(s))
-            btn.grid(row=i//4, column=i%4, padx=5, pady=5)
+            btn = ttk.Button(
+                op_frame,
+                text=f"{symbol} {desc}",   
+                width=14,
+                command=lambda s=symbol: self.add_to_expression(s)
+            )
+            btn.grid(row=i//4, column=i%4, padx=5, pady=5, sticky='ew')
+
         
         # Frame para la expresión
         expr_frame = ttk.LabelFrame(main_frame, text="Expresión Lógica", padding="10")
         expr_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
         expr_frame.columnconfigure(0, weight=1)
         
-# Entry para mostrar la expresión actual
+        # Entry para mostrar la expresión actual
         self.expression_entry = ttk.Entry(
             expr_frame,
             textvariable=self.expression,
             font=self.expression_font,
             state='readonly',
-            justify='center'  # <- Esto centra el texto
+            justify='center'
         )
         self.expression_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 10))
         
