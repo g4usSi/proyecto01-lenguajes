@@ -9,6 +9,7 @@ class TruthTableGUI:
         self.root.title("Generador de Tablas de Verdad")
         self.root.geometry("800x600")
         self.root.configure(bg='#f0f0f0')
+        self.history_stack = []
         
         # Variables
         self.expression = tk.StringVar()
@@ -99,6 +100,10 @@ class TruthTableGUI:
                    text="Limpiar", 
                   command=self.clear_expression).grid(row=0, column=1, padx=10)
         
+        ttk.Button(expr_frame, 
+            text="Deshacer", 
+            command=self.undo_expression).grid(row=0, column=2, padx=5)
+        
         # Frame para información de la expresión
         info_frame = ttk.LabelFrame(main_frame, text="Información", padding="10")
         info_frame.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
@@ -154,9 +159,23 @@ class TruthTableGUI:
         # Limpiar las columnas del treeview
         self.tree['columns'] = ()
         print("Expresión limpiada")  # Para debug
+
+    def undo_expression(self):
+        if len(self.history_stack) > 1:
+            self.history_stack.pop()  
+            last_expr = self.history_stack[-1]
+            self.expression.set(last_expr)
+        elif self.history_stack:
+            self.expression.set("")  
+            self.history_stack.clear()
+            
             
     def on_expression_change(self, *args):
         expr = self.expression.get()
+
+        if not self.history_stack or self.history_stack[-1] != expr:
+            self.history_stack.append(expr)
+
         variables = self.detect_variables(expr)
         num_vars = len(variables)
         num_rows = 2 ** num_vars if num_vars > 0 else 0
@@ -255,5 +274,9 @@ def main():
     root = tk.Tk()
     app = TruthTableGUI(root)
     root.mainloop()
+
+
+
+
 
 main()
